@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 
+import services.PushbulletAccount;
+import services.PushbulletDevice;
 import services.PushbulletService;
 import services.Pusher;
 import services.Pushers;
@@ -132,16 +134,60 @@ public class ServicesUI {
 			bufferRead = new BufferedReader(new InputStreamReader(System.in));
 			api_key = bufferRead.readLine();
 
-			PushbulletService service = (PushbulletService) Services.getServices().get("pushbullet");
+			PushbulletService service = (PushbulletService) Services
+					.getServices().get("pushbullet");
 			service.addAccount(alias, api_key);
+			addPushbulletDevice(alias);
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	private static void addPushbulletDevice(String alias) {
+
+		PushbulletService service = (PushbulletService) Services.getServices()
+				.get("pushbullet");
+		PushbulletAccount account = service.getAccount(alias);
+		Iterator<PushbulletDevice> it = account.getDevices().iterator();
+		PushbulletDevice device;
+		String s;
+		int option;
+
+		System.out.print(HEADER);
+		System.out.println(error);
+		System.out.println("");
+		System.out.println("Dispositivos disponibles:");
+		System.out.println("");
+
+		while (it.hasNext()) {
+			device = (PushbulletDevice) it.next();
+			System.out.println("Dispositivo: " + device.getModel() + "  Iden: " + device.getIden());
+		}
+		
+		try {
+			System.out.println("");
+			System.out.print("Elige un dispositivo");
+			BufferedReader bufferRead = new BufferedReader(new InputStreamReader(
+					System.in));
+			
+			s = bufferRead.readLine();
+			option = Integer.parseInt(s);
+			
+			System.out.println("");
+			System.out.print("Introduce un alias:");
+			s = bufferRead.readLine();
+			
+			Pushers.addPusher(account.getDevices().get(option-1));
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	/* Muestra por pantalla la lista de cuentas de Pushbullet configuradas */
-	
+
 	// TODO Hacer que el método funcione con servicios genéricos, no sólo con
 	// Pushbullet
 	private static void showPushers() {
