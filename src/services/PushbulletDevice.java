@@ -4,7 +4,8 @@ import org.json.*;
 
 public class PushbulletDevice implements Pusher {
 	
-	private final String type = "Pushbullet";
+	private final String serviceType = "Pushbullet";
+	private String apiKey;
 
 	private String alias;
 	private String iden;
@@ -24,14 +25,16 @@ public class PushbulletDevice implements Pusher {
 		this.android_version = extras.get("android_version").toString();
 		this.sdk_version = extras.get("sdk_version").toString();
 		this.app_version = extras.get("app_version").toString();
+		
+		Pushers.addPusher(this);
 	}
 
 	// Envía un mensaje PUSH al dispositivo
 	public void pushMessage(String title, String body){
-		PushbulletAPI.sendNote(title, body);
+		PushbulletAPI.sendNote(apiKey, title, body);
 	}
 
-	// Getters
+	// Getters y setters
 	public String getIden(){
 		return iden;
 	}
@@ -54,9 +57,12 @@ public class PushbulletDevice implements Pusher {
 		return nickname;
 	}
 	public String getServiceType(){
-		return type;
+		return serviceType;
 	}
 	public String getAlias(){
 		return alias;
+	}
+	public void setApiKey(String apiKey){
+		this.apiKey = apiKey;
 	}
 }

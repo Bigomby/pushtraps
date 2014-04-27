@@ -3,14 +3,13 @@ package ui;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Iterator;
 
-import services.PushbulletAccount;
+import services.PushbulletAPI;
 import services.PushbulletDevice;
-import services.PushbulletService;
 import services.Pusher;
 import services.Pushers;
-import services.Services;
 
 public class ServicesUI {
 
@@ -18,6 +17,7 @@ public class ServicesUI {
 	static String error = "";
 	static final String HEADER = "\033[2J\033[1;1H\n------ PushTraps -------\n------------------------\n\n";
 
+	/* Interfaz de usuario que muestra el menú principal de servicios */
 	public static void servicesMenu() {
 
 		Integer option;
@@ -73,6 +73,7 @@ public class ServicesUI {
 		clearError();
 	}
 
+	/* Añade servicios de notificadores */
 	private static void addPusher() {
 
 		Integer option;
@@ -100,13 +101,13 @@ public class ServicesUI {
 			case 0:
 				break;
 			case 1:
-				addPushbulletAccount();
+				addPushbulletDevice();
 				break;
 			case 2:
-				// addMailService();
+				// TODO addMailAccount();
 				break;
 			case 3:
-				// addTwitterService();
+				// TODO addTwitterAccount();
 				break;
 			default:
 				error = "Opción no válida";
@@ -119,80 +120,51 @@ public class ServicesUI {
 		}
 	}
 
-	private static void addPushbulletAccount() {
+	/* Añade un dispositivo de Pushbullet */
+	private static void addPushbulletDevice() {
 
 		String api_key;
-		String alias;
 		BufferedReader bufferRead;
+		ArrayList<PushbulletDevice> devices;
+		PushbulletDevice device;
+		String s;
+		int option;
+		int i = 0;
 
 		clearError();
 
 		try {
-			System.out.print("Introduce un alias para la cuenta: ");
-			bufferRead = new BufferedReader(new InputStreamReader(System.in));
-			alias = bufferRead.readLine();
-
-			System.out.print("Introduce la \"API_KEY\" del servicio: ");
+			System.out.print("Introduce la \"API_KEY\" del usuario: ");
 			bufferRead = new BufferedReader(new InputStreamReader(System.in));
 			api_key = bufferRead.readLine();
+			devices = PushbulletAPI.getDevices(api_key);
 
-			PushbulletService service = (PushbulletService) Services
-					.getServices().get("pushbullet");
-			service.addAccount(alias, api_key);
-			addPushbulletDevice(alias);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static void addPushbulletDevice(String alias) {
-
-		PushbulletService service = (PushbulletService) Services.getServices()
-				.get("pushbullet");
-		PushbulletAccount account = service.getAccount(alias);
-		Iterator<PushbulletDevice> it = account.getDevices().iterator();
-		PushbulletDevice device;
-		String s;
-		int option;
-
-		System.out.print(HEADER);
-		System.out.println(error);
-		System.out.println("");
-		System.out.println("Dispositivos disponibles:");
-		System.out.println("");
-
-		while (it.hasNext()) {
-			device = (PushbulletDevice) it.next();
-			System.out.println("Dispositivo: " + device.getModel() + "  Iden: "
-					+ device.getIden());
-		}
-
-		try {
+			System.out.print(HEADER);
+			System.out.println(error);
 			System.out.println("");
-			System.out.print("Elige un dispositivo");
-			BufferedReader bufferRead = new BufferedReader(
-					new InputStreamReader(System.in));
+			System.out.println(devices.size() + " dispositivos disponibles:");
+			System.out.println("");
+
+			for (i = 0; i < devices.size(); i++) {
+				device = devices.get(i);
+				System.out.println((i + 1) + ") " + device.getModel()
+						+ "  Iden: " + device.getIden());
+			}
+
+			System.out.println("");
+			System.out.print("Elige un dispositivo: ");
+			bufferRead = new BufferedReader(new InputStreamReader(System.in));
 
 			s = bufferRead.readLine();
 			option = Integer.parseInt(s);
-
-			System.out.println("");
-			System.out.print("Introduce un alias:");
-			s = bufferRead.readLine();
-
-			Pushers.addPusher(account.getDevices().get(option - 1));
+			Pushers.addPusher(devices.get(option - 1));
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	/* Muestra por pantalla la lista de cuentas de Pushbullet configuradas */
-
-	// TODO Hacer que el método funcione con servicios genéricos, no sólo con
-	// Pushbullet
 	private static void showPushers() {
 		if (Pushers.getPushers().isEmpty()) {
 			error = "No hay servicios activos";
@@ -210,8 +182,9 @@ public class ServicesUI {
 
 			while (it.hasNext()) {
 				pusher = (Pusher) it.next();
-				System.out.println(i + ") Servicio: " + pusher.getServiceType()
-						+ "  Alias: " + pusher.getAlias());
+				System.out.println((i + 1) + ") Servicio: "
+						+ pusher.getServiceType() + "  Alias: "
+						+ pusher.getAlias());
 				i++;
 			}
 			System.out.println("");
@@ -232,7 +205,6 @@ public class ServicesUI {
 		final String body = "Esto es una notificación de prueba de Pushtraps. Si puedes ver este mensaje,"
 				+ " la aplicación está funcionando";
 		BufferedReader bufferRead;
-		Iterator<Pusher> it = Pushers.getPushers().iterator();
 		Pusher pusher;
 		int i = 1;
 		int option;
@@ -240,14 +212,16 @@ public class ServicesUI {
 		System.out.print(HEADER);
 		System.out.println(error);
 		System.out.println("");
-		System.out.println("Servicios activos:");
+		System.out.println(Pushers.getPushers().size()
+				+ "notificadores activos:");
 		System.out.println("");
 
-		while (it.hasNext()) {
-			pusher = (Pusher) it.next();
-			System.out.println(i + ") Servicio: " + pusher.getServiceType()
-					+ "  Alias: " + pusher.getAlias());
-			i++;
+		for (i = 0; i < Pushers.getPushers().size(); i++) {
+			pusher = Pushers.getPushers().get(i);
+			System.out
+					.println((i + 1) + ") " + "Servicio: "
+							+ pusher.getServiceType() + " Cuenta: "
+							+ pusher.getAlias());
 		}
 
 		System.out.print("Elige el servicio para probar: ");
@@ -261,6 +235,7 @@ public class ServicesUI {
 		}
 	}
 
+	/* Limpia el estado de error */
 	private static void clearError() {
 		error = "";
 	}
