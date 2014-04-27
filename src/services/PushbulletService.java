@@ -15,4 +15,8 @@ public class PushbulletService implements Service {
 	public Map<String, PushbulletAccount> getAccounts(){
 		return accounts;
 	}
+	
+	public PushbulletAccount getAccount(String alias){
+		return accounts.get(alias);
+	}
 }

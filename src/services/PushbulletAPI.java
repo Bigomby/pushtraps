@@ -7,8 +7,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
@@ -20,9 +19,9 @@ import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 public class PushbulletAPI {
 
-	public static Map<String, PushbulletDevice> getDevices(String api_key) {
+	public static ArrayList<PushbulletDevice> getDevices(String api_key) {
 
-		Map<String, PushbulletDevice> devices = new HashMap<String, PushbulletDevice>();
+		ArrayList <PushbulletDevice> devices = new ArrayList<PushbulletDevice>();
 
 		try {
 
@@ -64,7 +63,7 @@ public class PushbulletAPI {
 			while (!jsonDevices.isNull(i)) {
 				JSONObject jsonDevice = jsonDevices.getJSONObject(i);
 				PushbulletDevice device = new PushbulletDevice(jsonDevice);
-				devices.put(device.getIden(), device);
+				devices.add(device);
 				i++;
 			}
 		} catch (MalformedURLException e) {

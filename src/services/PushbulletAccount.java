@@ -1,7 +1,6 @@
 package services;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 /* Representa un usuario de Pushbullet. Se le pasa como parámetro la API_KEY del usuario y
 almacena en un mapa los dispositivos asociados a la cuenta. */
