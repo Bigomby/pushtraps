@@ -25,13 +25,15 @@ public class PushbulletDevice implements Pusher {
 		this.android_version = extras.get("android_version").toString();
 		this.sdk_version = extras.get("sdk_version").toString();
 		this.app_version = extras.get("app_version").toString();
-		
-		Pushers.addPusher(this);
 	}
 
 	// Envía un mensaje PUSH al dispositivo
 	public void pushMessage(String title, String body){
-		PushbulletAPI.sendNote(apiKey, title, body);
+		PushbulletAPI.sendNote(apiKey, iden, title, body);
+	}
+	
+	public void addAsPusher(){
+		Pushers.addPusher(this);
 	}
 
 	// Getters y setters
@@ -64,5 +66,8 @@ public class PushbulletDevice implements Pusher {
 	}
 	public void setApiKey(String apiKey){
 		this.apiKey = apiKey;
+	}
+	public void setAlias(String alias){
+		this.alias = alias;
 	}
 }

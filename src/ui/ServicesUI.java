@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import services.PushbulletAPI;
 import services.PushbulletDevice;
@@ -123,41 +122,56 @@ public class ServicesUI {
 	/* Añade un dispositivo de Pushbullet */
 	private static void addPushbulletDevice() {
 
-		String api_key;
+		String apiKey;
 		BufferedReader bufferRead;
 		ArrayList<PushbulletDevice> devices;
 		PushbulletDevice device;
 		String s;
 		int option;
 		int i = 0;
+		String alias;
 
 		clearError();
 
 		try {
 			System.out.print("Introduce la \"API_KEY\" del usuario: ");
 			bufferRead = new BufferedReader(new InputStreamReader(System.in));
-			api_key = bufferRead.readLine();
-			devices = PushbulletAPI.getDevices(api_key);
+			apiKey = bufferRead.readLine();
+			devices = PushbulletAPI.getDevices(apiKey);
 
-			System.out.print(HEADER);
-			System.out.println(error);
-			System.out.println("");
-			System.out.println(devices.size() + " dispositivos disponibles:");
-			System.out.println("");
+			if (devices.size() == 0) {
+				error = "No se han encontrado dispositivos.";
+			} else {
+				System.out.print(HEADER);
+				System.out.println(error);
+				System.out.println("");
+				System.out.println(devices.size()
+						+ " dispositivos disponibles:");
+				System.out.println("");
 
-			for (i = 0; i < devices.size(); i++) {
-				device = devices.get(i);
-				System.out.println((i + 1) + ") " + device.getModel()
-						+ "  Iden: " + device.getIden());
+				for (i = 0; i < devices.size(); i++) {
+					device = devices.get(i);
+					System.out.println((i + 1) + ") " + device.getModel()
+							+ "  Iden: " + device.getIden());
+				}
+
+				System.out.println("");
+				System.out.print("Elige un dispositivo: ");
+				bufferRead = new BufferedReader(
+						new InputStreamReader(System.in));
+				s = bufferRead.readLine();
+
+				System.out.println("");
+				System.out.print("Introduce un alias para el dispositivo: ");
+				bufferRead = new BufferedReader(
+						new InputStreamReader(System.in));
+				alias = bufferRead.readLine();
+
+				option = Integer.parseInt(s);
+				devices.get(option - 1).setApiKey(apiKey); 
+				devices.get(option - 1).addAsPusher();
+				devices.get(option - 1).setAlias(alias);
 			}
-
-			System.out.println("");
-			System.out.print("Elige un dispositivo: ");
-			bufferRead = new BufferedReader(new InputStreamReader(System.in));
-
-			s = bufferRead.readLine();
-			option = Integer.parseInt(s);
-			Pushers.addPusher(devices.get(option - 1));
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -170,25 +184,24 @@ public class ServicesUI {
 			error = "No hay servicios activos";
 		} else {
 			clearError();
-			Iterator<Pusher> it = Pushers.getPushers().iterator();
 			Pusher pusher;
-			int i = 1;
+			int i;
 
 			System.out.print(HEADER);
 			System.out.println(error);
 			System.out.println("");
-			System.out.println("Servicios activos:");
+			System.out.println(Pushers.getPushers().size()
+					+ " servicios activos:");
 			System.out.println("");
 
-			while (it.hasNext()) {
-				pusher = (Pusher) it.next();
-				System.out.println((i + 1) + ") Servicio: "
-						+ pusher.getServiceType() + "  Alias: "
-						+ pusher.getAlias());
-				i++;
+			for (i = 0; i < Pushers.getPushers().size(); i++) {
+				pusher = Pushers.getPushers().get(i);
+				System.out.println((i+1) + ") Servicio: " + pusher.getServiceType()
+						+ "  Alias: " + pusher.getAlias());
 			}
+
 			System.out.println("");
-			System.out.println("Pulsa intro para volver...");
+			System.out.println("Pulsa intro para volver... ");
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(
 					System.in));
 			try {
@@ -206,30 +219,31 @@ public class ServicesUI {
 				+ " la aplicación está funcionando";
 		BufferedReader bufferRead;
 		Pusher pusher;
-		int i = 1;
+		int i;
 		int option;
 
-		System.out.print(HEADER);
-		System.out.println(error);
-		System.out.println("");
-		System.out.println(Pushers.getPushers().size()
-				+ "notificadores activos:");
-		System.out.println("");
-
-		for (i = 0; i < Pushers.getPushers().size(); i++) {
-			pusher = Pushers.getPushers().get(i);
-			System.out
-					.println((i + 1) + ") " + "Servicio: "
-							+ pusher.getServiceType() + " Cuenta: "
-							+ pusher.getAlias());
-		}
-
-		System.out.print("Elige el servicio para probar: ");
-		bufferRead = new BufferedReader(new InputStreamReader(System.in));
 		try {
+			System.out.print(HEADER);
+			System.out.println(error);
+			System.out.println("");
+			System.out.println(Pushers.getPushers().size()
+					+ " servicios activos:");
+			System.out.println("");
+
+			for (i = 0; i < Pushers.getPushers().size(); i++) {
+				pusher = Pushers.getPushers().get(i);
+				System.out.println((i+1) + ") Servicio: " + pusher.getServiceType()
+						+ "  Alias: " + pusher.getAlias());
+			}
+			
+			System.out.println("");
+			System.out.print("Elige el servicio para probar: ");
+			
+			bufferRead = new BufferedReader(new InputStreamReader(System.in));
 			option = Integer.parseInt(bufferRead.readLine());
-			pusher = Pushers.getPushers().get(option);
+			pusher = Pushers.getPushers().get(option - 1);
 			pusher.pushMessage(title, body);
+			error = "Enviado mensaje de prueba a " + pusher.getAlias();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
