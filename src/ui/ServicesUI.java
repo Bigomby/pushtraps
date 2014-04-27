@@ -24,51 +24,53 @@ public class ServicesUI {
 		String s;
 		boolean exit = false;
 
-		System.out.print(HEADER);
-		System.out.println(error);
-		System.out.println("");
-		System.out.println("Selecciona una acción a continuación:");
-		System.out.println("1)	Ver servicios activos");
-		System.out.println("2)	Añadir un servicio");
-		System.out.println("3)	Probar un servicio existente");
-		System.out.println("4)	Eliminar un servicio existente");
-		System.out.println("0)	Atrás");
-		System.out.println("");
-		System.out.print("Introduce una opción: ");
+		while (!exit) {
+			System.out.print(HEADER);
+			System.out.println(error);
+			System.out.println("");
+			System.out.println("Selecciona una acción a continuación:");
+			System.out.println("1)	Ver servicios activos");
+			System.out.println("2)	Añadir un servicio");
+			System.out.println("3)	Probar un servicio existente");
+			System.out.println("4)	Eliminar un servicio existente");
+			System.out.println("0)	Atrás");
+			System.out.println("");
+			System.out.print("Introduce una opción: ");
 
-		BufferedReader bufferRead = new BufferedReader(new InputStreamReader(
-				System.in));
-		try {
-			s = bufferRead.readLine();
-			option = Integer.parseInt(s);
+			BufferedReader bufferRead = new BufferedReader(
+					new InputStreamReader(System.in));
 
-			switch (option) {
-			case 0:
-				exit = true;
-				break;
-			case 1:
-				showPushers();
-				break;
-			case 2:
-				addPusher();
-				break;
-			case 3:
-				testPusher();
-				break;
-			case 4:
-				// TODO deleteService();
-				break;
-			default:
+			try {
+				s = bufferRead.readLine();
+				option = Integer.parseInt(s);
+
+				switch (option) {
+				case 0:
+					exit = true;
+					break;
+				case 1:
+					showPushers();
+					break;
+				case 2:
+					addPusher();
+					break;
+				case 3:
+					testPusher();
+					break;
+				case 4:
+					// TODO deleteService();
+					break;
+				default:
+					error = "Opción no válida";
+					break;
+				}
+			} catch (NumberFormatException e) {
 				error = "Opción no válida";
-				servicesMenu();
-				break;
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		if (!exit)
-			servicesMenu();
+		clearError();
 	}
 
 	private static void addPusher() {
@@ -162,24 +164,25 @@ public class ServicesUI {
 
 		while (it.hasNext()) {
 			device = (PushbulletDevice) it.next();
-			System.out.println("Dispositivo: " + device.getModel() + "  Iden: " + device.getIden());
+			System.out.println("Dispositivo: " + device.getModel() + "  Iden: "
+					+ device.getIden());
 		}
-		
+
 		try {
 			System.out.println("");
 			System.out.print("Elige un dispositivo");
-			BufferedReader bufferRead = new BufferedReader(new InputStreamReader(
-					System.in));
-			
+			BufferedReader bufferRead = new BufferedReader(
+					new InputStreamReader(System.in));
+
 			s = bufferRead.readLine();
 			option = Integer.parseInt(s);
-			
+
 			System.out.println("");
 			System.out.print("Introduce un alias:");
 			s = bufferRead.readLine();
-			
-			Pushers.addPusher(account.getDevices().get(option-1));
-			
+
+			Pushers.addPusher(account.getDevices().get(option - 1));
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
