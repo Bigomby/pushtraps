@@ -6,6 +6,7 @@ public class PushbulletDevice implements Pusher {
 	
 	private final String type = "Pushbullet";
 
+	private String alias;
 	private String iden;
 	private String manufacturer;
 	private String model;
@@ -26,8 +27,8 @@ public class PushbulletDevice implements Pusher {
 	}
 
 	// Envía un mensaje PUSH al dispositivo
-	public void pushMessage(String message){
-		//TODO
+	public void pushMessage(String title, String body){
+		PushbulletAPI.sendNote(title, body);
 	}
 
 	// Getters
@@ -54,5 +55,8 @@ public class PushbulletDevice implements Pusher {
 	}
 	public String getServiceType(){
 		return type;
+	}
+	public String getAlias(){
+		return alias;
 	}
 }

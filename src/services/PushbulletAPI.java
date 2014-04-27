@@ -77,4 +77,8 @@ public class PushbulletAPI {
 
 		return devices;
 	}
+
+	public static void sendNote(String title, String body){
+		// TODO
+	}
 }

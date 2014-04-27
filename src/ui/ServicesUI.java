@@ -4,10 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Iterator;
-import java.util.Map;
 
-import services.PushbulletAccount;
 import services.PushbulletService;
+import services.Pusher;
+import services.Pushers;
+import services.Services;
 
 public class ServicesUI {
 
@@ -27,8 +28,8 @@ public class ServicesUI {
 		System.out.println("Selecciona una acción a continuación:");
 		System.out.println("1)	Ver servicios activos");
 		System.out.println("2)	Añadir un servicio");
-		System.out.println("3)	Editar un servicio existente");
-		System.out.println("3)	Eliminar un servicio existente");
+		System.out.println("3)	Probar un servicio existente");
+		System.out.println("4)	Eliminar un servicio existente");
 		System.out.println("0)	Atrás");
 		System.out.println("");
 		System.out.print("Introduce una opción: ");
@@ -39,19 +40,18 @@ public class ServicesUI {
 			s = bufferRead.readLine();
 			option = Integer.parseInt(s);
 
-
 			switch (option) {
 			case 0:
 				exit = true;
 				break;
 			case 1:
-				showAccounts();
+				showPushers();
 				break;
 			case 2:
-				addService();
+				addPusher();
 				break;
 			case 3:
-				// TODO editServices();
+				testPusher();
 				break;
 			case 4:
 				// TODO deleteService();
@@ -65,10 +65,11 @@ public class ServicesUI {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(!exit) servicesMenu();
+		if (!exit)
+			servicesMenu();
 	}
 
-	private static void addService() {
+	private static void addPusher() {
 
 		Integer option;
 		String s;
@@ -119,9 +120,9 @@ public class ServicesUI {
 		String api_key;
 		String alias;
 		BufferedReader bufferRead;
-			
+
 		clearError();
-		
+
 		try {
 			System.out.print("Introduce un alias para la cuenta: ");
 			bufferRead = new BufferedReader(new InputStreamReader(System.in));
@@ -131,31 +132,38 @@ public class ServicesUI {
 			bufferRead = new BufferedReader(new InputStreamReader(System.in));
 			api_key = bufferRead.readLine();
 
-			PushbulletService.addAccount(alias, api_key);
+			PushbulletService service = (PushbulletService) Services.getServices().get("pushbullet");
+			service.addAccount(alias, api_key);
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
-	private static void showAccounts() {
-		if (PushbulletService.getAccounts().isEmpty()) {
+	/* Muestra por pantalla la lista de cuentas de Pushbullet configuradas */
+	
+	// TODO Hacer que el método funcione con servicios genéricos, no sólo con
+	// Pushbullet
+	private static void showPushers() {
+		if (Pushers.getPushers().isEmpty()) {
 			error = "No hay servicios activos";
 		} else {
 			clearError();
-			System.out.println(PushbulletService.getAccounts());
-			Iterator it = PushbulletService.getAccounts().entrySet().iterator();
+			Iterator<Pusher> it = Pushers.getPushers().iterator();
+			Pusher pusher;
+			int i = 1;
 
 			System.out.print(HEADER);
 			System.out.println(error);
 			System.out.println("");
-			System.out.println("Cuentas activas:");
+			System.out.println("Servicios activos:");
 			System.out.println("");
+
 			while (it.hasNext()) {
-				Map.Entry e = (Map.Entry) it.next();
-				PushbulletAccount account = (PushbulletAccount) e.getValue();
-				System.out.println("- " + account.getAlias());
+				pusher = (Pusher) it.next();
+				System.out.println(i + ") Servicio: " + pusher.getServiceType()
+						+ "  Alias: " + pusher.getAlias());
+				i++;
 			}
 			System.out.println("");
 			System.out.println("Pulsa intro para volver...");
@@ -168,8 +176,43 @@ public class ServicesUI {
 			}
 		}
 	}
-	
-	private static void clearError(){
+
+	/* Realiza una prueba de un notificador enviado un mensaje de prueba */
+	private static void testPusher() {
+		final String title = "PushTraps - Prueba";
+		final String body = "Esto es una notificación de prueba de Pushtraps. Si puedes ver este mensaje,"
+				+ " la aplicación está funcionando";
+		BufferedReader bufferRead;
+		Iterator<Pusher> it = Pushers.getPushers().iterator();
+		Pusher pusher;
+		int i = 1;
+		int option;
+
+		System.out.print(HEADER);
+		System.out.println(error);
+		System.out.println("");
+		System.out.println("Servicios activos:");
+		System.out.println("");
+
+		while (it.hasNext()) {
+			pusher = (Pusher) it.next();
+			System.out.println(i + ") Servicio: " + pusher.getServiceType()
+					+ "  Alias: " + pusher.getAlias());
+			i++;
+		}
+
+		System.out.print("Elige el servicio para probar: ");
+		bufferRead = new BufferedReader(new InputStreamReader(System.in));
+		try {
+			option = Integer.parseInt(bufferRead.readLine());
+			pusher = Pushers.getPushers().get(option);
+			pusher.pushMessage(title, body);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void clearError() {
 		error = "";
 	}
 }
