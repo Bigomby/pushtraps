@@ -18,7 +18,7 @@ We have three components:
 
 ### SNMP Agents
 
-You can set the app for listen SNMP TRAPS from differents IP addresses. When a TRAP is received, it forwards it to configured push services.
+You can set the app for listen SNMP TRAPS from differents IP addresses. When a TRAP is received, is forwarded to configured push services.
 
 The app uses [SNMP4J library](http://www.snmp4j.org/).
 
