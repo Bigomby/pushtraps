@@ -5,8 +5,8 @@ Java application that listens and forwards SNMP TRAPs to multiple third party pu
 By now, the following services are supported:
 
 - Pushbullet
-- Twitter
-- Email
+- Twitter // TODO
+- Email // TODO
 
 ## How it works
 
@@ -20,12 +20,12 @@ We have three components:
 
 You can set the app for listen SNMP TRAPS from differents IP addresses. When a TRAP is received, is forwarded to configured push services.
 
-The app uses [SNMP4J library](http://www.snmp4j.org/).
+The app uses [SNMP4J library](http://www.snmp4j.org) for the communication with the SNAMPs agents.
 
 ### Push services
 
-Services where the TRAPs are forwarded. The supported devices are listed above.
+Services to forward the TRAPs. The currently supported devices are listed above.
 
 ### Connections
 
-After you configure an agent and a service you need to set a connection. Connections let you forward TRAPs from a specific agent to a specific push service.
+After you set an agent and a service you need to set a connection. Connections let you forward TRAPs from a specific agent to a specific push service.
