@@ -4,29 +4,30 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
-import services.PushbulletAPI;
-import services.PushbulletDevice;
-import services.Pusher;
-import services.Pushers;
+import communications.PushbulletAPI;
+
+import services.Pushbullet;
+import services.Service;
 
 public class ServicesUI {
 
-	static final String CLS = "\033[2J\033[1;1H";
-	static String error = "";
-	static final String HEADER = "\033[2J\033[1;1H\n------ PushTraps -------\n------------------------\n\n";
-
+	List<Service> services;
+	
+	ServicesUI(List<Service> services){
+		this.services = services;
+	}
+	
 	/* Interfaz de usuario que muestra el menú principal de servicios */
-	public static void servicesMenu() {
+	public void menu() {
 
 		Integer option;
 		String s;
 		boolean exit = false;
 
 		while (!exit) {
-			System.out.print(HEADER);
-			System.out.println(error);
-			System.out.println("");
+			UI.printHeader();
 			System.out.println("Selecciona una acción a continuación:");
 			System.out.println("1)	Ver servicios activos");
 			System.out.println("2)	Añadir un servicio");
@@ -51,7 +52,7 @@ public class ServicesUI {
 					showPushers();
 					break;
 				case 2:
-					addPusher();
+					addService();
 					break;
 				case 3:
 					testPusher();
@@ -60,27 +61,25 @@ public class ServicesUI {
 					// TODO deleteService();
 					break;
 				default:
-					error = "Opción no válida";
+					UI.setError("Opción no válida");
 					break;
 				}
 			} catch (NumberFormatException e) {
-				error = "Opción no válida";
+				UI.setError("Opción no válida");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		clearError();
+		UI.clearError();
 	}
 
 	/* Añade servicios de notificadores */
-	private static void addPusher() {
+	private void addService() {
 
 		Integer option;
 		String s;
 
-		System.out.print(HEADER);
-		System.out.println(error);
-		System.out.println("");
+		UI.printHeader();
 		System.out.println("Selecciona un servicio a continuación:");
 		System.out.println("1)	Pushbullet");
 		System.out.println("2)	e-mail");
@@ -100,7 +99,7 @@ public class ServicesUI {
 			case 0:
 				break;
 			case 1:
-				addPushbulletDevice();
+				addPushbullet();
 				break;
 			case 2:
 				// TODO addMailAccount();
@@ -109,29 +108,29 @@ public class ServicesUI {
 				// TODO addTwitterAccount();
 				break;
 			default:
-				error = "Opción no válida";
+				UI.setError("Opción no válida");
 				break;
 			}
 		} catch (NumberFormatException e) {
-			error = "Opción no válida";
+			UI.setError("Opción no válida");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	/* Añade un dispositivo de Pushbullet */
-	private static void addPushbulletDevice() {
+	private void addPushbullet() {
 
 		String apiKey;
 		BufferedReader bufferRead;
-		ArrayList<PushbulletDevice> devices;
-		PushbulletDevice device;
+		ArrayList<Pushbullet> devices;
+		Pushbullet device;
 		String s;
 		int option;
 		int i = 0;
 		String alias;
 
-		clearError();
+		UI.clearError();
 
 		try {
 			System.out.print("Introduce la \"API_KEY\" del usuario: ");
@@ -140,11 +139,9 @@ public class ServicesUI {
 			devices = PushbulletAPI.getDevices(apiKey);
 
 			if (devices.size() == 0) {
-				error = "No se han encontrado dispositivos.";
+				UI.setError("No se han encontrado dispositivos.");
 			} else {
-				System.out.print(HEADER);
-				System.out.println(error);
-				System.out.println("");
+				UI.printHeader();
 				System.out.println(devices.size()
 						+ " dispositivos disponibles:");
 				System.out.println("");
@@ -169,8 +166,8 @@ public class ServicesUI {
 
 				option = Integer.parseInt(s);
 				devices.get(option - 1).setApiKey(apiKey); 
-				devices.get(option - 1).addAsPusher();
 				devices.get(option - 1).setAlias(alias);
+				services.add(devices.get(option-1));
 			}
 
 		} catch (IOException e) {
@@ -179,25 +176,23 @@ public class ServicesUI {
 	}
 
 	/* Muestra por pantalla la lista de cuentas de Pushbullet configuradas */
-	private static void showPushers() {
-		if (Pushers.getPushers().isEmpty()) {
-			error = "No hay servicios activos";
+	private void showPushers() {
+		if (services.isEmpty()) {
+			UI.setError("No hay servicios activos");
 		} else {
-			clearError();
-			Pusher pusher;
+			UI.clearError();
+			Service service;
 			int i;
 
-			System.out.print(HEADER);
-			System.out.println(error);
-			System.out.println("");
-			System.out.println(Pushers.getPushers().size()
+			UI.printHeader();
+			System.out.println(services.size()
 					+ " servicios activos:");
 			System.out.println("");
 
-			for (i = 0; i < Pushers.getPushers().size(); i++) {
-				pusher = Pushers.getPushers().get(i);
-				System.out.println((i+1) + ") Servicio: " + pusher.getServiceType()
-						+ "  Alias: " + pusher.getAlias());
+			for (i = 0; i < services.size(); i++) {
+				service = services.get(i);
+				System.out.println((i+1) + ") Servicio: " + service.getServiceType()
+						+ "  Alias: " + service.getAlias());
 			}
 
 			System.out.println("");
@@ -213,27 +208,25 @@ public class ServicesUI {
 	}
 
 	/* Realiza una prueba de un notificador enviado un mensaje de prueba */
-	private static void testPusher() {
+	private void testPusher() {
 		final String title = "PushTraps - Prueba";
 		final String body = "Esto es una notificación de prueba de Pushtraps. Si puedes ver este mensaje,"
 				+ " la aplicación está funcionando";
 		BufferedReader bufferRead;
-		Pusher pusher;
+		Service service;
 		int i;
 		int option;
 
 		try {
-			System.out.print(HEADER);
-			System.out.println(error);
-			System.out.println("");
-			System.out.println(Pushers.getPushers().size()
+			UI.printHeader();
+			System.out.println(services.size()
 					+ " servicios activos:");
 			System.out.println("");
 
-			for (i = 0; i < Pushers.getPushers().size(); i++) {
-				pusher = Pushers.getPushers().get(i);
-				System.out.println((i+1) + ") Servicio: " + pusher.getServiceType()
-						+ "  Alias: " + pusher.getAlias());
+			for (i = 0; i < services.size(); i++) {
+				service = services.get(i);
+				System.out.println((i+1) + ") Servicio: " + service.getServiceType()
+						+ "  Alias: " + service.getAlias());
 			}
 			
 			System.out.println("");
@@ -241,16 +234,11 @@ public class ServicesUI {
 			
 			bufferRead = new BufferedReader(new InputStreamReader(System.in));
 			option = Integer.parseInt(bufferRead.readLine());
-			pusher = Pushers.getPushers().get(option - 1);
-			pusher.pushMessage(title, body);
-			error = "Enviado mensaje de prueba a " + pusher.getAlias();
+			service = services.get(option-1);
+			service.pushMessage(title, body);
+			UI.setInfo("Enviado mensaje de prueba a " + service.getAlias());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	/* Limpia el estado de error */
-	private static void clearError() {
-		error = "";
 	}
 }

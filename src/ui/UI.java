@@ -1,29 +1,38 @@
+package ui;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 
-import ui.ServicesUI;
+import services.Service;
+import agents.Agent;
+import connections.Connection;
 
-public class Server {
+public class UI {
 
 	static final String CLS = "\033[2J\033[1;1H";
-	static String error = "";
+	static String info = "";
 	static final String HEADER = "\033[2J\033[1;1H\n------ PushTraps -------\n------------------------\n\n";
 
-	public static void main(String[] arg) {
-		menu();
+	private ServicesUI servicesUI;
+	private AgentsUI agentsUI;
+	private ConnectionsUI connectionsUI;
+	
+	public UI(List<Service> services, List<Agent> agents, List<Connection> connections) {
+		servicesUI = new ServicesUI(services);
+		agentsUI = new AgentsUI(agents);
+		connectionsUI = new ConnectionsUI(connections);
 	}
 
-	private static void menu() {
+	public void menu() {
 
 		String s;
 		Boolean exit = false;
 		Integer option = null;
 
 		while (!exit) {
-			System.out.print(HEADER);
-			System.out.println(error);
-			System.out.println("");
+			UI.printHeader();
 			System.out.println("Selecciona una opción a continuación:");
 			System.out.println("1)	Editar servicios");
 			System.out.println("2)	Editar agentes");
@@ -44,23 +53,41 @@ public class Server {
 					exit = true;
 					break;
 				case 1:
-					ServicesUI.servicesMenu();
+					servicesUI.menu();
 					break;
 				case 2:
-					// TODO editAgents();
+					agentsUI.menu();
 					break;
 				case 3:
-					// TODO editConnections();
+					connectionsUI.menu();
 					break;
 				default:
-					error = "Opción no válida";
+					UI.setError("Opción no válida");
 					break;
 				}
 			} catch (NumberFormatException e) {
-				error = "Opción no válida";
+				UI.setError("Opción no válida");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	static void printHeader() {
+		System.out.print(UI.HEADER);
+		System.out.println(UI.info);
+		System.out.println("");
+	}
+	
+	static void setInfo(String info){
+		UI.info = info;
+	}
+	
+	static void setError(String error){
+		UI.info = "Error: " + error;
+	}
+	
+	static void clearError() {
+		info = "";
 	}
 }

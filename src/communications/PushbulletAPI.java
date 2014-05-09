@@ -1,4 +1,4 @@
-package services;
+package communications;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -17,13 +17,15 @@ import javax.net.ssl.SSLSocketFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import services.Pushbullet;
+
 import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 public class PushbulletAPI {
 
-	public static ArrayList<PushbulletDevice> getDevices(String api_key) {
+	public static ArrayList<Pushbullet> getDevices(String api_key) {
 
-		ArrayList<PushbulletDevice> devices = new ArrayList<PushbulletDevice>();
+		ArrayList<Pushbullet> devices = new ArrayList<Pushbullet>();
 
 		try {
 
@@ -64,7 +66,7 @@ public class PushbulletAPI {
 
 			while (!jsonDevices.isNull(i)) {
 				JSONObject jsonDevice = jsonDevices.getJSONObject(i);
-				PushbulletDevice device = new PushbulletDevice(jsonDevice);
+				Pushbullet device = new Pushbullet(jsonDevice);
 				devices.add(device);
 				i++;
 			}

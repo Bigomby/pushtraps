@@ -2,7 +2,10 @@ package services;
 
 import org.json.*;
 
-public class PushbulletDevice implements Pusher {
+import communications.PushbulletAPI;
+
+
+public class Pushbullet implements Service {
 	
 	private final String serviceType = "Pushbullet";
 	private String apiKey;
@@ -17,7 +20,7 @@ public class PushbulletDevice implements Pusher {
 	private String nickname;
 
 	// Recibe un objeto JSON y los almacena en los atributos
-	public PushbulletDevice (JSONObject device){
+	public Pushbullet (JSONObject device){
 		this.iden = device.getString("iden");
 		JSONObject extras = device.getJSONObject("extras");
 		this.manufacturer = extras.getString("manufacturer");
@@ -30,10 +33,6 @@ public class PushbulletDevice implements Pusher {
 	// Envía un mensaje PUSH al dispositivo
 	public void pushMessage(String title, String body){
 		PushbulletAPI.sendNote(apiKey, iden, title, body);
-	}
-	
-	public void addAsPusher(){
-		Pushers.addPusher(this);
 	}
 
 	// Getters y setters
