@@ -7,7 +7,7 @@ package services;
 public interface Service {
 	public void pushMessage(String title, String body);
 
-	public String getServiceType();
+	public String getType();
 
 	public String getAlias();
 }

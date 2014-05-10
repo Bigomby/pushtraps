@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import services.Service;
-
 import agents.Agent;
 
 public class AgentsUI {
@@ -139,7 +137,6 @@ public class AgentsUI {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 	private void list() {
@@ -171,6 +168,5 @@ public class AgentsUI {
 				e.printStackTrace();
 			}
 		}
-		
 	}
 }

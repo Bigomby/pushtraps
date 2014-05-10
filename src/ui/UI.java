@@ -22,7 +22,7 @@ public class UI {
 	public UI(List<Service> services, List<Agent> agents, List<Connection> connections) {
 		servicesUI = new ServicesUI(services);
 		agentsUI = new AgentsUI(agents);
-		connectionsUI = new ConnectionsUI(connections);
+		connectionsUI = new ConnectionsUI(connections, agents, services);
 	}
 
 	public void menu() {
