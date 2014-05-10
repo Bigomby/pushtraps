@@ -8,6 +8,8 @@ By now, the following services are supported:
 - Twitter // TODO
 - Email // TODO
 
+You can download the application on https://github.com/Bigomby/pushtraps/releases
+
 ## How it works
 
 We have three components:
