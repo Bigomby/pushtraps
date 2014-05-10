@@ -12,4 +12,6 @@ public interface Agent {
 	void addConnection(Connection connection);
 
 	void removeConnection(Connection connectioin);
+	
+	String getType();
 }

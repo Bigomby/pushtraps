@@ -15,9 +15,11 @@ public class SnmpAgent implements Agent {
 
 	List<Connection> connections;
 	String ip;
+	String alias;
 
-	public SnmpAgent(String ip) {
+	public SnmpAgent(String ip, String alias) {
 		this.ip = ip;
+		this.alias = alias;
 	}
 
 	public void add() throws UnknownHostException, IOException {
@@ -51,5 +53,9 @@ public class SnmpAgent implements Agent {
 
 	public void removeConnection(Connection connectioin) {
 		connections.remove(connectioin);
+	}
+
+	public String getType() {
+		return "snmp";
 	}
 }
