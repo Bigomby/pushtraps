@@ -31,8 +31,6 @@ import org.snmp4j.util.ThreadPool;
 
 import agents.SnmpAgent;
 
-// TODO Comprobar que funciona
-
 public class TrapReceiver implements Runnable, CommandResponder {
 
 	private MultiThreadedMessageDispatcher dispatcher;
