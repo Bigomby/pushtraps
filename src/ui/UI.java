@@ -36,7 +36,8 @@ public class UI {
 			System.out.println("Selecciona una opción a continuación:");
 			System.out.println("1)	Editar servicios");
 			System.out.println("2)	Editar agentes");
-			System.out.println("2)	Editar conexiones");
+			System.out.println("3)	Editar conexiones");
+			System.out.println("");
 			System.out.println("0)	Salir");
 			System.out.println("");
 			System.out.print("Introduce una opción: ");
