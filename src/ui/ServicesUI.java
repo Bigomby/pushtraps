@@ -13,16 +13,16 @@ public class ServicesUI {
 	PushbulletUI pushbulletUI;
 	TwitterUI twitterUI;
 	EmailUI emailUI;
-	
-	ServicesUI(List<Service> services){
+
+	ServicesUI(List<Service> services) {
 		this.services = services;
-		
+
 		pushbulletUI = new PushbulletUI();
 		twitterUI = new TwitterUI();
 		emailUI = new EmailUI();
-		
+
 	}
-	
+
 	/* Interfaz de usuario que muestra el menú principal de servicios */
 	public void menu() {
 
@@ -132,14 +132,14 @@ public class ServicesUI {
 			int i;
 
 			UI.printHeader();
-			System.out.println(services.size()
-					+ " servicios activos:");
+			System.out.println(services.size() + " servicios activos:");
 			System.out.println("");
 
 			for (i = 0; i < services.size(); i++) {
 				service = services.get(i);
-				System.out.println((i+1) + ") Servicio: " + service.getServiceType()
-						+ "  Alias: " + service.getAlias());
+				System.out.println((i + 1) + ") Servicio: "
+						+ service.getServiceType() + "  Alias: "
+						+ service.getAlias());
 			}
 
 			System.out.println("");
@@ -166,30 +166,61 @@ public class ServicesUI {
 
 		try {
 			UI.printHeader();
-			System.out.println(services.size()
-					+ " servicios activos:");
+			System.out.println(services.size() + " servicios activos:");
 			System.out.println("");
 
 			for (i = 0; i < services.size(); i++) {
 				service = services.get(i);
-				System.out.println((i+1) + ") Servicio: " + service.getServiceType()
-						+ "  Alias: " + service.getAlias());
+				System.out.println((i + 1) + ") Servicio: "
+						+ service.getServiceType() + "  Alias: "
+						+ service.getAlias());
 			}
-			
+
 			System.out.println("");
 			System.out.print("Elige el servicio para probar: ");
-			
+
 			bufferRead = new BufferedReader(new InputStreamReader(System.in));
 			option = Integer.parseInt(bufferRead.readLine());
-			service = services.get(option-1);
+			service = services.get(option - 1);
 			service.pushMessage(title, body);
 			UI.setInfo("Enviado mensaje de prueba a " + service.getAlias());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	void remove(){
-		// TODO Crear función que elimine servicios
+
+	void remove() {
+
+		try {
+			Service service;
+			int i;
+			int option;
+
+			UI.printHeader();
+			System.out.println(services.size() + " servicios activos:");
+			System.out.println("");
+
+			for (i = 0; i < services.size(); i++) {
+				service = services.get(i);
+				System.out.println((i + 1) + ") Servicio: "
+						+ service.getServiceType() + "  Alias: "
+						+ service.getAlias());
+			}
+
+			System.out.println("");
+			System.out.print("Elige el servicio para eliminar: ");
+
+			BufferedReader bufferRead = new BufferedReader(
+					new InputStreamReader(System.in));
+			option = Integer.parseInt(bufferRead.readLine());
+			
+			services.remove(option-1);
+			// Habría que ver qué pasa si no lo elimino de las conexiones
+
+		} catch (NumberFormatException e) {
+			UI.setError("Opción no válida");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
