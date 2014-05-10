@@ -9,6 +9,7 @@ import agents.Agent;
 public class Connection {
 
 	private String alias;
+	private List<Agent> agents;
 	private List<Service> services;
 	private boolean active = true;
 
@@ -31,10 +32,12 @@ public class Connection {
 
 	public void addAgent(Agent agent) {
 		agent.addConnection(this);
+		agents.add(agent);
 	}
 
 	public void removeAgent(Agent agent) {
 		agent.removeConnection(this);
+		agents.remove(agent);
 	}
 
 	public void addService(Service service) {
@@ -46,7 +49,13 @@ public class Connection {
 	}
 
 	public void clean() {
-		// TODO Eliminarse de los agentes
+		Iterator<Agent> it = agents.iterator();
+		Agent agent;
+		
+		while (it.hasNext()) {
+			agent = it.next();
+			agent.removeConnection(this);
+		}
 	}
 
 	public void pause() {
