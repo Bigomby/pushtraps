@@ -3,6 +3,7 @@ package agents;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.snmp4j.CommandResponderEvent;
@@ -20,6 +21,7 @@ public class SnmpAgent implements Agent {
 	public SnmpAgent(String ip, String alias) {
 		this.ip = ip;
 		this.alias = alias;
+		connections = new LinkedList<Connection>();
 	}
 
 	public void add() throws UnknownHostException, IOException {

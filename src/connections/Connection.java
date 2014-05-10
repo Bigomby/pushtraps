@@ -1,6 +1,7 @@
 package connections;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import services.Service;
@@ -15,6 +16,8 @@ public class Connection {
 
 	public Connection(String alias) {
 		this.alias = alias;
+		agents = new LinkedList<Agent>();
+		services = new LinkedList<Service>();
 	}
 
 	public void forward(String ip, String message) {
@@ -31,13 +34,18 @@ public class Connection {
 	}
 
 	public void addAgent(Agent agent) {
-		agent.addConnection(this);
 		agents.add(agent);
+		if(this instanceof Connection){
+			agent.addConnection(this);
+		} else {
+			System.out.println(this.toString());
+		}
+
 	}
 
 	public void removeAgent(Agent agent) {
-		agent.removeConnection(this);
 		agents.remove(agent);
+		agent.removeConnection(this);
 	}
 
 	public void addService(Service service) {
