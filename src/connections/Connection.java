@@ -7,9 +7,14 @@ import services.Service;
 import agents.Agent;
 
 public class Connection {
-
+	
+	private String alias;
 	private List<Service> services;
 	private boolean active = true;
+	
+	public Connection(String alias) {
+		this.alias = alias;
+	}
 
 	public void forward(String ip, String message) {
 
@@ -24,32 +29,35 @@ public class Connection {
 		}
 	}
 
-	void addAgent(Agent agent) {
+	public void addAgent(Agent agent) {
 		agent.addConnection(this);
 	}
 
-	void removeAgent(Agent agent) {
+	public void removeAgent(Agent agent) {
 		agent.removeConnection(this);
 	}
 
-	void addService(Service service) {
+	public void addService(Service service) {
 		services.add(service);
 	}
 
-	void removeService(Service service) {
+	public void removeService(Service service) {
 		services.remove(service);
 	}
 
-	void remove() throws Throwable {
+	public void remove() throws Throwable {
 		this.finalize();
 	}
 
-	void pause() {
+	public void pause() {
 		active = false;
 	}
 
-	void start() {
+	public void start() {
 		active = true;
 	}
-
+	
+	public String getAlias(){
+		return alias;
+	}
 }
