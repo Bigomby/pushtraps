@@ -6,53 +6,55 @@ import java.util.List;
 import services.Service;
 import agents.Agent;
 
-
-
 public class Connection {
-	
+
 	private List<Agent> agents;
 	private List<Service> services;
-	
-	public void forward(String ip, String message){
-		Iterator<Service> it = services.iterator();
-		Service service;
-		
-		while(it.hasNext()){
-			service = it.next();
-			service.pushMessage(ip, message);
+	private boolean active = true;
+
+	public void forward(String ip, String message) {
+
+		if (active) {
+			Iterator<Service> it = services.iterator();
+			Service service;
+
+			while (it.hasNext()) {
+				service = it.next();
+				service.pushMessage(ip, message);
+			}
 		}
 	}
 
-	void addAgent(Agent agent){
-		// TODO Crear el método para añadir agentes 
+	void addAgent(Agent agent) {
+		agents.add(agent);
 	}
 
 	Agent getAgent(int index) {
 		return agents.get(index);
 	}
-	
-	void removeAgent(Agent agent){
-		// TODO Crear el método para eliminar agentes
+
+	void removeAgent(Agent agent) {
+		agents.remove(agent);
 	}
-	
-	void addService(Service service){
-		// TODO Crear el método para añadir servicios
+
+	void addService(Service service) {
+		services.add(service);
 	}
-	
-	void removeService(Service service){
-		// TODO Crear el método para eliminar servicios
+
+	void removeService(Service service) {
+		services.remove(service);
 	}
-	
-	void remove(){
-		// TODO Crear el método para eliminar la conexión
+
+	void remove() throws Throwable {
+		this.finalize();
 	}
-	
-	void pause(){
-		// TODO Crear el método para pausar la conexión
+
+	void pause() {
+		active = false;
 	}
-	
-	void start(){
-		// TODO Crear el método para iniciar la conexión
+
+	void start() {
+		active = true;
 	}
 
 }
