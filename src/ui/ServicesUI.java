@@ -3,20 +3,24 @@ package ui;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 
-import communications.PushbulletAPI;
-
-import services.Pushbullet;
 import services.Service;
 
 public class ServicesUI {
 
 	List<Service> services;
+	PushbulletUI pushbulletUI;
+	TwitterUI twitterUI;
+	EmailUI emailUI;
 	
 	ServicesUI(List<Service> services){
 		this.services = services;
+		
+		pushbulletUI = new PushbulletUI();
+		twitterUI = new TwitterUI();
+		emailUI = new EmailUI();
+		
 	}
 	
 	/* Interfaz de usuario que muestra el menú principal de servicios */
@@ -49,16 +53,16 @@ public class ServicesUI {
 					exit = true;
 					break;
 				case 1:
-					showPushers();
+					list();
 					break;
 				case 2:
-					addService();
+					add();
 					break;
 				case 3:
-					testPusher();
+					test();
 					break;
 				case 4:
-					// TODO deleteService();
+					remove();
 					break;
 				default:
 					UI.setError("Opción no válida");
@@ -74,7 +78,7 @@ public class ServicesUI {
 	}
 
 	/* Añade servicios de notificadores */
-	private void addService() {
+	private void add() {
 
 		Integer option;
 		String s;
@@ -99,13 +103,13 @@ public class ServicesUI {
 			case 0:
 				break;
 			case 1:
-				addPushbullet();
+				pushbulletUI.add();
 				break;
 			case 2:
-				// TODO addMailAccount();
+				emailUI.add();
 				break;
 			case 3:
-				// TODO addTwitterAccount();
+				twitterUI.add();
 				break;
 			default:
 				UI.setError("Opción no válida");
@@ -118,65 +122,8 @@ public class ServicesUI {
 		}
 	}
 
-	/* Añade un dispositivo de Pushbullet */
-	private void addPushbullet() {
-
-		String apiKey;
-		BufferedReader bufferRead;
-		ArrayList<Pushbullet> devices;
-		Pushbullet device;
-		String s;
-		int option;
-		int i = 0;
-		String alias;
-
-		UI.clearError();
-
-		try {
-			System.out.print("Introduce la \"API_KEY\" del usuario: ");
-			bufferRead = new BufferedReader(new InputStreamReader(System.in));
-			apiKey = bufferRead.readLine();
-			devices = PushbulletAPI.getDevices(apiKey);
-
-			if (devices.size() == 0) {
-				UI.setError("No se han encontrado dispositivos.");
-			} else {
-				UI.printHeader();
-				System.out.println(devices.size()
-						+ " dispositivos disponibles:");
-				System.out.println("");
-
-				for (i = 0; i < devices.size(); i++) {
-					device = devices.get(i);
-					System.out.println((i + 1) + ") " + device.getModel()
-							+ "  Iden: " + device.getIden());
-				}
-
-				System.out.println("");
-				System.out.print("Elige un dispositivo: ");
-				bufferRead = new BufferedReader(
-						new InputStreamReader(System.in));
-				s = bufferRead.readLine();
-
-				System.out.println("");
-				System.out.print("Introduce un alias para el dispositivo: ");
-				bufferRead = new BufferedReader(
-						new InputStreamReader(System.in));
-				alias = bufferRead.readLine();
-
-				option = Integer.parseInt(s);
-				devices.get(option - 1).setApiKey(apiKey); 
-				devices.get(option - 1).setAlias(alias);
-				services.add(devices.get(option-1));
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	/* Muestra por pantalla la lista de cuentas de Pushbullet configuradas */
-	private void showPushers() {
+	private void list() {
 		if (services.isEmpty()) {
 			UI.setError("No hay servicios activos");
 		} else {
@@ -208,7 +155,7 @@ public class ServicesUI {
 	}
 
 	/* Realiza una prueba de un notificador enviado un mensaje de prueba */
-	private void testPusher() {
+	private void test() {
 		final String title = "PushTraps - Prueba";
 		final String body = "Esto es una notificación de prueba de Pushtraps. Si puedes ver este mensaje,"
 				+ " la aplicación está funcionando";
@@ -240,5 +187,9 @@ public class ServicesUI {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	void remove(){
+		// TODO Crear función que elimine servicios
 	}
 }

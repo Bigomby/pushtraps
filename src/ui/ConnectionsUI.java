@@ -7,11 +7,11 @@ import connections.Connection;
 public class ConnectionsUI {
 
 	public ConnectionsUI(List<Connection> connections) {
-		// TODO Auto-generated constructor stub
+		// TODO Crear constructor
 	}
 	
 	void menu(){
-		// TODO
+		// TODO Crear menú
 	}
 
 }

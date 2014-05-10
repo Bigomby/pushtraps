@@ -24,13 +24,15 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 import org.snmp4j.util.MultiThreadedMessageDispatcher;
 import org.snmp4j.util.ThreadPool;
 
+// TODO Comprobar que funciona
+
 public class TrapReceiver {
 
-	private static boolean running = false;
 	private static MultiThreadedMessageDispatcher dispatcher;
 	private static Snmp snmp = null;
 	private static Address listenAddress;
 	private static ThreadPool threadPool;
+	private static int activeAgents = 0;
 
 	@SuppressWarnings({ "rawtypes", "static-access" })
 	public static void init() throws UnknownHostException, IOException {
@@ -38,7 +40,7 @@ public class TrapReceiver {
 		dispatcher = new MultiThreadedMessageDispatcher(threadPool,
 				new MessageDispatcherImpl());
 		listenAddress = GenericAddress.parse(System.getProperty(
-				"snmp4j.listenAddress", "udp:0.0.0.0/5000"));
+				"snmp4j.listenAddress", "udp:0.0.0.0/5050"));
 		TransportMapping transport;
 		if (listenAddress instanceof UdpAddress) {
 			transport = new DefaultUdpTransportMapping(
@@ -59,15 +61,27 @@ public class TrapReceiver {
 								.createLocalEngineID()), 0);
 		SecurityModels.getInstance().addSecurityModel(usm);
 		snmp.listen();
-		running = true;
-	}
-
-	public static void add(CommandResponder commandResponder) {
-		snmp.addCommandResponder(commandResponder);
 	}
 	
-	public static boolean isRunning(){
-		if(running)  return true;
-		else return false;
+	// TODO Implementar un método que asocie agente con ip suscrita
+	public static void add(CommandResponder commandResponder, String ip)
+			throws UnknownHostException, IOException {
+		
+		if (activeAgents == 0) {
+			init();
+		}
+
+		snmp.addCommandResponder(commandResponder);
+		activeAgents++;
+	}
+
+	public static void remove(CommandResponder commandResponder)
+			throws IOException {
+		snmp.removeCommandResponder(commandResponder);
+		activeAgents--;
+
+		if (activeAgents == 0) {
+			snmp.close();
+		}
 	}
 }
