@@ -58,4 +58,9 @@ public class SnmpAgent implements Agent {
 	public String getType() {
 		return "snmp";
 	}
+
+	@Override
+	public String getAlias() {
+		return alias;
+	}
 }

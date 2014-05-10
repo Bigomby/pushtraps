@@ -14,4 +14,6 @@ public interface Agent {
 	void removeConnection(Connection connectioin);
 	
 	String getType();
+	
+	String getAlias();
 }
