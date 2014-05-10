@@ -32,25 +32,25 @@ public class Snmp implements Agent, CommandResponder {
 		// TODO Método para procesar los TRAPs
 		System.out.println("Recibido TRAP de: "
 				+ event.getPeerAddress().toString());
+		System.out.println(event.toString());
+		send(event.toString());
 	}
 
 	public void send(String message) {
 		Iterator<Connection> it = connections.iterator();
 		Connection connection;
-		
-		while(it.hasNext()){
+
+		while (it.hasNext()) {
 			connection = it.next();
 			connection.forward(ip, message);
 		}
 	}
 
 	public void addConnection(Connection connection) {
-		// TODO Método para añadir conexiones a agentes
-
+		connections.add(connection);
 	}
 
 	public void removeConnection(Connection connectioin) {
-		// TODO Método para eliminar conexiones de agentes
-
+		connections.remove(connectioin);
 	}
 }
