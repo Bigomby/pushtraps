@@ -93,7 +93,7 @@ public class ConnectionsUI {
 
 			for (i = 0; i < connections.size(); i++) {
 				connection = connections.get(i);
-				System.out.println((i + 1) + ") Agente: " + "  Alias: "
+				System.out.println((i + 1) + ") Alias: "
 						+ connection.getAlias());
 			}
 
@@ -126,9 +126,10 @@ public class ConnectionsUI {
 			String[] options;
 
 			connection = new Connection(alias);
+			connections.add(connection);
 
 			// Selección de agente
-
+			
 			UI.printHeader();
 			System.out.println("Lista de agentes disponibiles:");
 
@@ -141,6 +142,7 @@ public class ConnectionsUI {
 						+ "  Alias: " + agent.getAlias() + " IP: "
 						+ agent.getIP());
 			}
+			System.out.println("");
 			System.out
 					.print("Selecciona los agentes separados por coma que deseas agregar a la conexión: ");
 
@@ -149,7 +151,8 @@ public class ConnectionsUI {
 			options = s.split(",");
 
 			for (i = 0; i < options.length; i++) {
-				connection.addAgent(agents.get(Integer.parseInt(options[i])));
+				System.out.println("Seleccionado agente: " + (Integer.parseInt(options[i])-1));
+				connection.addAgent(agents.get(Integer.parseInt(options[i])-1));
 			}
 
 			// Selección de servicio
@@ -174,9 +177,10 @@ public class ConnectionsUI {
 
 			for (i = 0; i < options.length; i++) {
 				connection
-						.addService(services.get(Integer.parseInt(options[i])));
+						.addService(services.get(Integer.parseInt(options[i])-1));
 			}
-
+			
+			UI.clearError();
 		} catch (NumberFormatException e) {
 			UI.setError("Opción no válida");
 		} catch (IOException e) {
