@@ -2,9 +2,6 @@ package agents;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,15 +37,14 @@ public class SnmpAgent implements Agent {
 	public void sendTrap(PDU pdu, String ip) {
 
 		PDUv1 trap = null;
-		Date date;
-		DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 		String generic = null;
+		long minutes;
 
 		if (pdu.getType() == PDU.V1TRAP) {
 			trap = new PDUv1((PDUv1) pdu);
-			date = new Date(trap.getTimestamp());
+			minutes = trap.getTimestamp() /1000 / 60;
 
-			switch (trap.getSpecificTrap()) {
+			switch (trap.getGenericTrap()) {
 			case 0:
 				generic = "COLDSTART";
 				break;
@@ -71,18 +67,20 @@ public class SnmpAgent implements Agent {
 				break;
 			}
 
-			String title = "Trap recibida de: " + ip;
-			StringBuffer body = new StringBuffer("TRAP generada en: "
-					+ formatter.format(date));
-			body.append("TRAP generada en: " + formatter.format(date));
-			body.append("OID de Empresa: " + trap.getEnterprise());
-			body.append("Tipo genérico: " + generic);
-			body.append("Tipo específico: " + trap.getSpecificTrap());
-			
+			String title = "Trap recibida de: " + alias;
+
+			String body = new StringBuilder()
+					.append("Dirección IP: " + ip + "\n")
+					.append("Uptime: " + minutes + " minutos\n")
+					.append("OID de Empresa: " + trap.getEnterprise() + "\n")
+					.append("Tipo genérico: " + generic + "\n")
+					.append("Tipo específico: " + trap.getSpecificTrap() + "\n")
+					.toString();
+
 			Iterator<Connection> it = connections.iterator();
-			
-			while(it.hasNext()){
-				it.next().forward(title, body.toString());
+
+			while (it.hasNext()) {
+				it.next().forward(title, body);
 			}
 		}
 	}
