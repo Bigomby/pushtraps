@@ -12,8 +12,12 @@ import services.Service;
 import communications.PushbulletAPI;
 
 public class PushbulletUI {
-	
+
 	private List<Service> services;
+
+	PushbulletUI(List<Service> services) {
+		this.services = services;
+	}
 
 	void add() {
 
