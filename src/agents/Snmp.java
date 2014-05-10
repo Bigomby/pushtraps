@@ -2,6 +2,7 @@ package agents;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Iterator;
 import java.util.List;
 
 import org.snmp4j.CommandResponder;
@@ -34,8 +35,13 @@ public class Snmp implements Agent, CommandResponder {
 	}
 
 	public void send(String message) {
-		// TODO Método para enviar TRAPs a servicios
-
+		Iterator<Connection> it = connections.iterator();
+		Connection connection;
+		
+		while(it.hasNext()){
+			connection = it.next();
+			connection.forward(ip, message);
+		}
 	}
 
 	public void addConnection(Connection connection) {
