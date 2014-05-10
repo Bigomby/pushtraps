@@ -158,7 +158,7 @@ public class AgentsUI {
 				agent = agents.get(i);
 				System.out.println((i + 1) + ") Agente: "
 						+ agent.getType() + "  Alias: "
-						+ agents.getAlias());
+						+ agent.getAlias());
 			}
 
 			System.out.println("");

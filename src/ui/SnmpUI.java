@@ -17,17 +17,20 @@ public class SnmpUI {
 	}
 
 	void add() throws IOException {
-		String ip;
 		BufferedReader bufferRead;
 
 		UI.clearError();
 
 		System.out.print("Introduce la dirección IP del agente: ");
 		bufferRead = new BufferedReader(new InputStreamReader(System.in));
-		ip = bufferRead.readLine();
+		String ip = bufferRead.readLine();
 		// TODO Comprobar dirección IP válida
 		
-		SnmpAgent snmpAgent = new SnmpAgent(ip);
+		System.out.print("Introduce un alias para el agente: ");
+		bufferRead = new BufferedReader(new InputStreamReader(System.in));
+		String alias = bufferRead.readLine();
+		
+		SnmpAgent snmpAgent = new SnmpAgent(ip, alias);
 		agents.add(snmpAgent);
 		
 	}
