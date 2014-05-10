@@ -17,7 +17,7 @@ public class ServicesUI {
 	ServicesUI(List<Service> services) {
 		this.services = services;
 
-		pushbulletUI = new PushbulletUI();
+		pushbulletUI = new PushbulletUI(services);
 		twitterUI = new TwitterUI();
 		emailUI = new EmailUI();
 
