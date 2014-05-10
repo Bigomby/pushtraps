@@ -2,11 +2,15 @@ package agents;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.snmp4j.CommandResponderEvent;
+import org.snmp4j.PDU;
+import org.snmp4j.PDUv1;
 
 import communications.TrapReceiver;
 
@@ -18,43 +22,93 @@ public class SnmpAgent implements Agent {
 	String ip;
 	String alias;
 
-	public SnmpAgent(String ip, String alias) {
+	public SnmpAgent(String ip, String alias) throws UnknownHostException,
+			IOException {
 		this.ip = ip;
 		this.alias = alias;
 		connections = new LinkedList<Connection>();
 	}
 
-	public void add() throws UnknownHostException, IOException {
+	public void listen() throws UnknownHostException, IOException {
 		TrapReceiver.add(this, ip);
 	}
 
-	public void remove() throws IOException, InterruptedException {
+	public void exit() throws IOException, InterruptedException {
 		TrapReceiver.remove(this);
 	}
 
-	public void processPdu(CommandResponderEvent event) {
-		System.out.println("Recibido TRAP de: "
-				+ event.getPeerAddress().toString());
-		System.out.println(event.toString());
-		send(event.toString());
-	}
+	public void sendTrap(PDU pdu, String ip) {
 
-	public void send(String message) {
-		Iterator<Connection> it = connections.iterator();
-		Connection connection;
+		PDUv1 trap = null;
+		Date date;
+		DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+		String generic = null;
 
-		while (it.hasNext()) {
-			connection = it.next();
-			connection.forward(ip, message);
+		if (pdu.getType() == PDU.V1TRAP) {
+			trap = new PDUv1((PDUv1) pdu);
+			date = new Date(trap.getTimestamp());
+
+			switch (trap.getSpecificTrap()) {
+			case 0:
+				generic = "COLDSTART";
+				break;
+			case 1:
+				generic = "WARMSTART";
+				break;
+			case 2:
+				generic = "LINKDOWN";
+				break;
+			case 3:
+				generic = "COLDSTART";
+				break;
+			case 4:
+				generic = "AUTHENTICATIONFAILURE";
+				break;
+			case 6:
+				generic = "ENTERPRISE_SPECIFIC";
+				break;
+			default:
+				break;
+			}
+
+			String title = "Trap recibida de: " + ip;
+			StringBuffer body = new StringBuffer("TRAP generada en: "
+					+ formatter.format(date));
+			body.append("TRAP generada en: " + formatter.format(date));
+			body.append("OID de Empresa: " + trap.getEnterprise());
+			body.append("Tipo genérico: " + generic);
+			body.append("Tipo específico: " + trap.getSpecificTrap());
+			
+			Iterator<Connection> it = connections.iterator();
+			
+			while(it.hasNext()){
+				it.next().forward(title, body.toString());
+			}
 		}
 	}
 
 	public void addConnection(Connection connection) {
 		connections.add(connection);
+		try {
+			listen();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
-	public void removeConnection(Connection connectioin) {
-		connections.remove(connectioin);
+	public void removeConnection(Connection connection) {
+		connections.remove(connection);
+		if (connections.isEmpty()) {
+			try {
+				exit();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public String getType() {

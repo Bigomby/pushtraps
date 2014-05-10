@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.snmp4j.CommandResponder;
 import org.snmp4j.CommandResponderEvent;
@@ -37,14 +36,22 @@ public class TrapReceiver implements Runnable, CommandResponder {
 	private static Snmp snmp = null;
 	private Address listenAddress;
 	private ThreadPool threadPool;
-	private static Map<String, List<SnmpAgent>> snmpAgents;
+	private static Map<String, SnmpAgent> snmpAgents;
 	private static Thread t;
+	private static int activeAgents = 0;
 
 	static {
-		snmpAgents = new HashMap<String, List<SnmpAgent>>();
+		snmpAgents = new HashMap<String, SnmpAgent>();
 	}
 
-	private static int activeAgents = 0;
+	public static void main(String[] args) {
+		new TrapReceiver();
+	}
+
+	TrapReceiver() {
+		run();
+
+	}
 
 	@SuppressWarnings({ "rawtypes" })
 	public void run() {
@@ -52,7 +59,7 @@ public class TrapReceiver implements Runnable, CommandResponder {
 		dispatcher = new MultiThreadedMessageDispatcher(threadPool,
 				new MessageDispatcherImpl());
 		listenAddress = GenericAddress.parse(System.getProperty(
-				"snmp4j.listenAddress", "udp:0.0.0.0/5050"));
+				"snmp4j.listenAddress", "udp:0.0.0.0/20162"));
 		TransportMapping transport;
 
 		try {
@@ -72,6 +79,7 @@ public class TrapReceiver implements Runnable, CommandResponder {
 					MPv3.createLocalEngineID()), 0);
 			SecurityModels.getInstance().addSecurityModel(usm);
 			snmp.addCommandResponder(this);
+			System.out.println("A la escucha de TRAPs");
 			snmp.listen();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -88,29 +96,14 @@ public class TrapReceiver implements Runnable, CommandResponder {
 			t.start();
 		}
 
-		List<SnmpAgent> activeSnmp = snmpAgents.get(ip);
-
-		if (activeSnmp != null) {
-			activeSnmp.add(snmpAgent);
-		} else {
-			List<SnmpAgent> newSnmpList = new LinkedList<SnmpAgent>();
-			newSnmpList.add(snmpAgent);
-			snmpAgents.put(ip, newSnmpList);
-		}
-
+		snmpAgents.put(ip, snmpAgent);
 		activeAgents++;
 	}
 
-	public static void remove(SnmpAgent snmpAgent) throws IOException, InterruptedException {
+	public static void remove(SnmpAgent snmpAgent) throws IOException,
+			InterruptedException {
 
-		Iterator<String> it = snmpAgents.keySet().iterator();
-
-		while (it.hasNext()) {
-			String ip = it.next();
-			List<SnmpAgent> activeSnmps = snmpAgents.get(ip);
-			activeSnmps.remove(snmpAgent);
-		}
-
+		snmpAgents.remove(snmpAgent).getIP();
 		activeAgents--;
 
 		if (activeAgents == 0) {
@@ -120,22 +113,26 @@ public class TrapReceiver implements Runnable, CommandResponder {
 	}
 
 	public void processPdu(CommandResponderEvent event) {
-		System.out.println(event.toString());
 
-		String activeIp;
-		String ip = event.getPeerAddress().toString();
-		Iterator<String> it = snmpAgents.keySet().iterator();
+		String ip;
+
+		System.out.println("Recibido un TRAP");
+
+		String[] address = event.getPeerAddress().toString().split(":");
+		ip = address[0];
+
+		Iterator<Entry<String, SnmpAgent>> it = snmpAgents.entrySet()
+				.iterator();
 
 		while (it.hasNext()) {
-			activeIp = it.next();
-
-			if (ip == activeIp) {
-				Iterator<SnmpAgent> it2 = snmpAgents.get(ip).iterator();
-
-				while (it2.hasNext()) {
-					SnmpAgent activeSnmp = it2.next();
-					activeSnmp.send(event.toString());
-				}
+			Map.Entry<String, SnmpAgent> agent = (Map.Entry<String, SnmpAgent>) it
+					.next();
+			if (agent.getKey() == ip) {
+				System.out.println("Enviando TRAP...");
+				agent.getValue().sendTrap(event.getPDU(), ip);
+			} else {
+				System.out
+						.println("No se ha encontrado ningún agente para esta IP");
 			}
 		}
 	}

@@ -7,7 +7,9 @@ import connections.Connection;
  */
 
 public interface Agent {
-	void send(String message);
+	void listen() throws Exception;
+	
+	void exit() throws Exception;
 
 	void addConnection(Connection connection);
 
