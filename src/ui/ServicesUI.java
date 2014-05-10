@@ -37,6 +37,7 @@ public class ServicesUI {
 			System.out.println("2)	Añadir un servicio");
 			System.out.println("3)	Probar un servicio existente");
 			System.out.println("4)	Eliminar un servicio existente");
+			System.out.println("");
 			System.out.println("0)	Atrás");
 			System.out.println("");
 			System.out.print("Introduce una opción: ");
@@ -88,6 +89,7 @@ public class ServicesUI {
 		System.out.println("1)	Pushbullet");
 		System.out.println("2)	e-mail");
 		System.out.println("3)	Twitter");
+		System.out.println("");
 		System.out.println("0)	Atrás");
 		System.out.println("");
 		System.out.print("Introduce una opción: ");
