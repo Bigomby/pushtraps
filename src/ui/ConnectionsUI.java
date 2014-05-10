@@ -3,13 +3,10 @@ package ui;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 
 import services.Service;
-
 import agents.Agent;
-
 import connections.Connection;
 
 public class ConnectionsUI {
@@ -176,7 +173,8 @@ public class ConnectionsUI {
 			options = s.split(",");
 
 			for (i = 0; i < options.length; i++) {
-				connection.addService(services.get(Integer.parseInt(options[i])));
+				connection
+						.addService(services.get(Integer.parseInt(options[i])));
 			}
 
 		} catch (NumberFormatException e) {
@@ -187,18 +185,99 @@ public class ConnectionsUI {
 	}
 
 	private void remove() {
-		// TODO Auto-generated method stub
+		try {
+			Connection connection;
+			int i;
+			int option;
 
+			UI.printHeader();
+			System.out.println(connections.size() + " conexiones activas:");
+			System.out.println("");
+
+			for (i = 0; i < connections.size(); i++) {
+				connection = connections.get(i);
+				System.out.println((i + 1) + ") Conexión: "
+						+ connection.getAlias());
+			}
+
+			System.out.println("");
+			System.out.print("Elige la conexión para eliminar: ");
+
+			BufferedReader bufferRead = new BufferedReader(
+					new InputStreamReader(System.in));
+			option = Integer.parseInt(bufferRead.readLine());
+
+			connections.get(option - 1).clean();
+			connections.remove(option - 1);
+
+		} catch (NumberFormatException e) {
+			UI.setError("Opción no válida");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void pause() {
-		// TODO Auto-generated method stub
+		try {
+			Connection connection;
+			int i;
+			int option;
 
+			UI.printHeader();
+			System.out.println(connections.size() + " conexiones activas:");
+			System.out.println("");
+
+			for (i = 0; i < connections.size(); i++) {
+				connection = connections.get(i);
+				System.out.println((i + 1) + ") Conexión: "
+						+ connection.getAlias() + " Estado: " + connection.getStatus());
+			}
+
+			System.out.println("");
+			System.out.print("Elige la conexión para pausar: ");
+
+			BufferedReader bufferRead = new BufferedReader(
+					new InputStreamReader(System.in));
+			option = Integer.parseInt(bufferRead.readLine());
+
+			connections.get(option - 1).pause();
+
+		} catch (NumberFormatException e) {
+			UI.setError("Opción no válida");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void start() {
-		// TODO Auto-generated method stub
+		try {
+			Connection connection;
+			int i;
+			int option;
 
+			UI.printHeader();
+			System.out.println(connections.size() + " conexiones activas:");
+			System.out.println("");
+
+			for (i = 0; i < connections.size(); i++) {
+				connection = connections.get(i);
+				System.out.println((i + 1) + ") Conexión: "
+						+ connection.getAlias() + " Estado: " + connection.getStatus());
+			}
+
+			System.out.println("");
+			System.out.print("Elige la conexión para reactivar: ");
+
+			BufferedReader bufferRead = new BufferedReader(
+					new InputStreamReader(System.in));
+			option = Integer.parseInt(bufferRead.readLine());
+
+			connections.get(option - 1).start();
+
+		} catch (NumberFormatException e) {
+			UI.setError("Opción no válida");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-
 }
