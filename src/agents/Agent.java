@@ -16,4 +16,6 @@ public interface Agent {
 	String getType();
 	
 	String getAlias();
+	
+	String getIP();
 }

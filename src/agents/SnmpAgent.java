@@ -59,8 +59,11 @@ public class SnmpAgent implements Agent {
 		return "snmp";
 	}
 
-	@Override
 	public String getAlias() {
 		return alias;
+	}
+
+	public String getIP() {
+		return ip;
 	}
 }
