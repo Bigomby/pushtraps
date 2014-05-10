@@ -35,7 +35,7 @@ public class Pushbullet implements Service {
 		return model;
 	}
 
-	public String getServiceType() {
+	public String getType() {
 		return serviceType;
 	}
 
