@@ -7,11 +7,11 @@ import services.Service;
 import agents.Agent;
 
 public class Connection {
-	
+
 	private String alias;
 	private List<Service> services;
 	private boolean active = true;
-	
+
 	public Connection(String alias) {
 		this.alias = alias;
 	}
@@ -45,8 +45,8 @@ public class Connection {
 		services.remove(service);
 	}
 
-	public void remove() throws Throwable {
-		this.finalize();
+	public void clean() {
+		// TODO Eliminarse de los agentes
 	}
 
 	public void pause() {
@@ -56,8 +56,16 @@ public class Connection {
 	public void start() {
 		active = true;
 	}
-	
-	public String getAlias(){
+
+	public String getAlias() {
 		return alias;
+	}
+
+	public String getStatus() {
+		if (active) {
+			return "Active";
+		} else {
+			return "Paused";
+		}
 	}
 }
