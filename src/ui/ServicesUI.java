@@ -138,7 +138,7 @@ public class ServicesUI {
 			for (i = 0; i < services.size(); i++) {
 				service = services.get(i);
 				System.out.println((i + 1) + ") Servicio: "
-						+ service.getServiceType() + "  Alias: "
+						+ service.getType() + "  Alias: "
 						+ service.getAlias());
 			}
 
@@ -172,7 +172,7 @@ public class ServicesUI {
 			for (i = 0; i < services.size(); i++) {
 				service = services.get(i);
 				System.out.println((i + 1) + ") Servicio: "
-						+ service.getServiceType() + "  Alias: "
+						+ service.getType() + "  Alias: "
 						+ service.getAlias());
 			}
 
@@ -203,7 +203,7 @@ public class ServicesUI {
 			for (i = 0; i < services.size(); i++) {
 				service = services.get(i);
 				System.out.println((i + 1) + ") Servicio: "
-						+ service.getServiceType() + "  Alias: "
+						+ service.getType() + "  Alias: "
 						+ service.getAlias());
 			}
 
