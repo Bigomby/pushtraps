@@ -5,18 +5,18 @@ import java.net.UnknownHostException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.snmp4j.CommandResponder;
 import org.snmp4j.CommandResponderEvent;
 
 import communications.TrapReceiver;
+
 import connections.Connection;
 
-public class Snmp implements Agent, CommandResponder {
+public class SnmpAgent implements Agent {
 
 	List<Connection> connections;
 	String ip;
 
-	public Snmp(String ip) {
+	public SnmpAgent(String ip) {
 		this.ip = ip;
 	}
 
@@ -24,7 +24,7 @@ public class Snmp implements Agent, CommandResponder {
 		TrapReceiver.add(this, ip);
 	}
 
-	public void remove() throws IOException {
+	public void remove() throws IOException, InterruptedException {
 		TrapReceiver.remove(this);
 	}
 
