@@ -8,7 +8,6 @@ import agents.Agent;
 
 public class Connection {
 
-	private List<Agent> agents;
 	private List<Service> services;
 	private boolean active = true;
 
@@ -26,15 +25,11 @@ public class Connection {
 	}
 
 	void addAgent(Agent agent) {
-		agents.add(agent);
-	}
-
-	Agent getAgent(int index) {
-		return agents.get(index);
+		agent.addConnection(this);
 	}
 
 	void removeAgent(Agent agent) {
-		agents.remove(agent);
+		agent.removeConnection(this);
 	}
 
 	void addService(Service service) {

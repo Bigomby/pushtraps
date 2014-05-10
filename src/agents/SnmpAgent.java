@@ -29,7 +29,6 @@ public class SnmpAgent implements Agent {
 	}
 
 	public void processPdu(CommandResponderEvent event) {
-		// TODO Método para procesar los TRAPs
 		System.out.println("Recibido TRAP de: "
 				+ event.getPeerAddress().toString());
 		System.out.println(event.toString());
