@@ -1,9 +1,8 @@
 package services;
 
-import org.json.*;
+import org.json.JSONObject;
 
 import communications.PushbulletAPI;
-import connections.Connection;
 
 public class Pushbullet implements Service {
 
@@ -50,15 +49,5 @@ public class Pushbullet implements Service {
 
 	public void setAlias(String alias) {
 		this.alias = alias;
-	}
-
-	public void addConnection(Connection connection) {
-		// TODO Método para añadir conexiones a servicios
-
-	}
-
-	public void removeConnection(Connection connectioin) {
-		// TODO Método para añadir conexiones de servicios
-
 	}
 }
